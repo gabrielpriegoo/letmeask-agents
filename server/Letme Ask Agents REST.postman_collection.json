@@ -1,0 +1,24 @@
+{
+	"info": {
+		"_postman_id": "fbce43f2-de9d-4c7c-be1c-5f5d4de71a53",
+		"name": "Letme Ask Agents REST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31440300",
+		"_collection_link": "https://developments-4183.postman.co/workspace/1dadc29a-fa03-4dbb-92ea-74ec90fbe210/collection/31440300-fbce43f2-de9d-4c7c-be1c-5f5d4de71a53?action=share&source=collection_link&creator=31440300"
+	},
+	"item": [
+		{
+			"name": "routes",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
