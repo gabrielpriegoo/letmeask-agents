@@ -22,8 +22,8 @@ export const CreateRoom = () => {
       <div>{isLoading && <p>Carregando...</p>}</div>
       <div>
         {data?.map((room) => (
-          <div key={room.id}>
-            <p>{room.name}</p>
+          <div key={room.id} className="flex flex-col gap-2">
+            <Link to={`/room/${room.id}`}>{room.name}</Link>
           </div>
         ))}
       </div>
