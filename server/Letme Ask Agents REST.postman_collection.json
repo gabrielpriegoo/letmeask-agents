@@ -4,17 +4,81 @@
 		"name": "Letme Ask Agents REST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "31440300",
-		"_collection_link": "https://developments-4183.postman.co/workspace/1dadc29a-fa03-4dbb-92ea-74ec90fbe210/collection/31440300-fbce43f2-de9d-4c7c-be1c-5f5d4de71a53?action=share&source=collection_link&creator=31440300"
+		"_collection_link": "https://developments-4183.postman.co/workspace/pessoal-projects~1dadc29a-fa03-4dbb-92ea-74ec90fbe210/collection/31440300-fbce43f2-de9d-4c7c-be1c-5f5d4de71a53?action=share&source=collection_link&creator=31440300"
 	},
 	"item": [
 		{
 			"name": "routes",
 			"item": [
 				{
-					"name": "New Request",
+					"name": "List rooms",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}rooms",
+							"host": [
+								"{{baseUrl}}rooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create room",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"teste\",\r\n    \"description\": \"teste\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}rooms?name=teste&description=teste",
+							"host": [
+								"{{baseUrl}}rooms"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "teste"
+								},
+								{
+									"key": "description",
+									"value": "teste"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List room to question Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"teste\",\r\n    \"description\": \"teste\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}rooms/6f05315b-1442-4bfa-af46-cf39d951f59e/questions",
+							"host": [
+								"{{baseUrl}}rooms"
+							],
+							"path": [
+								"6f05315b-1442-4bfa-af46-cf39d951f59e",
+								"questions"
+							]
+						}
 					},
 					"response": []
 				}
