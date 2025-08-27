@@ -1,0 +1,63 @@
+import { useRooms } from "@/http/use-rooms";
+import { dayjs } from "@/lib/dayjs";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Badge } from "./ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+
+export const RoomList = () => {
+  const { data, isLoading } = useRooms();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Salas Recentes</CardTitle>
+        <CardDescription>
+          Acesso rápido para as salas criadas recentemente
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {isLoading && (
+          <div className="text-muted-foreground text-sm">
+            <span>Carregando salas...</span>
+          </div>
+        )}
+
+        {data?.map((room) => {
+          return (
+            // biome-ignore assist/source/useSortedAttributes: link react router
+            <Link
+              key={room.id}
+              className="flex items-center justify-between rounded-lg border p-3 hover:bg-accent/50"
+              to={`/room/${room.id}`}
+            >
+              <div className="flex flex-1 flex-col gap-1">
+                <h3 className="font-medium">{room.name}</h3>
+
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {dayjs(room.createdAt).toNow()}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {room.questionsCount} pergunta(s)
+                  </Badge>
+                </div>
+              </div>
+
+              <span className="flex items-center gap-2 text-sm">
+                Entrar
+                <ArrowRight size={12} />
+              </span>
+            </Link>
+          );
+        })}
+      </CardContent>
+    </Card>
+  );
+};
