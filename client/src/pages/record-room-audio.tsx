@@ -1,15 +1,25 @@
 /** biome-ignore-all lint/suspicious/noConsole: <console log> */
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 
 const isRecordingSupported =
   !!navigator.mediaDevices &&
   typeof navigator.mediaDevices.getUserMedia === "function" &&
   typeof window.MediaRecorder === "function";
 
+type RoomParams = {
+  id: string;
+};
+
 export const RecordRoomAudio = () => {
   const [isRecording, setIsRecording] = useState(false);
   const recorder = useRef<MediaRecorder | null>(null);
+  const params = useParams<RoomParams>();
+
+  if (!params.id) {
+    return <Navigate replace to="/" />;
+  }
 
   function stopRecording() {
     setIsRecording(false);
@@ -17,6 +27,21 @@ export const RecordRoomAudio = () => {
     if (recorder.current && recorder.current.state !== "inactive") {
       recorder.current.stop();
     }
+  }
+
+  async function uploudAudio(audio: Blob) {
+    const formData = new FormData();
+
+    formData.append("file", audio, "audio.webm");
+
+    const response = await fetch(
+      `http://localhost:3333/rooms/${params.id}/audio`,
+      { method: "POST", body: formData }
+    );
+
+    const result = await response.json;
+
+    console.log(result);
   }
 
   async function startRecording() {
@@ -42,7 +67,7 @@ export const RecordRoomAudio = () => {
 
     recorder.current.ondataavailable = (event) => {
       if (event.data.size > 0) {
-        console.log(event.data);
+        uploudAudio(event.data);
       }
     };
 
@@ -64,7 +89,6 @@ export const RecordRoomAudio = () => {
       ) : (
         <Button onClick={startRecording}>Gravar áudio</Button>
       )}
-      <Button onClick={startRecording}>Gravar áudio</Button>
       {isRecording ? <p>Gravando...</p> : <p>Pausado</p>}
     </div>
   );
