@@ -43,3 +43,43 @@ export async function generateEmbeddings(text: string) {
 
   return response.embeddings[0].values;
 }
+
+export async function gerenateAnswer(
+  question: string,
+  transcriptions: string[]
+) {
+  const context = transcriptions.join("\n\n---\n\n");
+
+  const prompt =
+    `Você é um assistente de perguntas e respostas. Use o contexto abaixo para responder a pergunta em português do Brasil.
+
+    CONTEXTO:
+    ${context}
+
+    PERGUNTA:
+    ${question}
+
+    INSTRUÇÕES:
+    - Se você não souber a resposta, diga "Desculpe, não tenho informações o suficiente.";
+    - Seja breve e direto ao ponto;
+    - Use apenas informações do contexto fornecido;
+    - Responda em português do Brasil.
+    - Mantenha a formatação do texto, incluindo listas, negrito, itálico e links, se houver.
+    - Se for citar o contexto, utilize o termo "De acordo com o conteúdo da aula".
+    `.trim();
+
+  const response = await gemini.models.generateContent({
+    model,
+    contents: [
+      {
+        text: prompt,
+      },
+    ],
+  });
+
+  if (!response.text) {
+    throw new Error("No answer found in response Gemini");
+  }
+
+  return response.text;
+}
