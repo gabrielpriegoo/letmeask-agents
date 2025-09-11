@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateQuestionRequest } from "./types/create-question-request";
 import type { CreateQuestionResponse } from "./types/create-question-response";
+import type { GetRoomQuestionsResponse } from "./types/get-room-questions-response";
 
 export const useCreateQuestion = (roomId: string) => {
   const queryClient = useQueryClient();
@@ -21,8 +22,37 @@ export const useCreateQuestion = (roomId: string) => {
       const result: CreateQuestionResponse = await response.json();
       return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["get-questions", roomId] });
+    onMutate({ question }) {
+      const questions = queryClient.getQueryData<GetRoomQuestionsResponse>([
+        "get-questions",
+        roomId,
+      ]);
+
+      const questionsArray = questions ?? [];
+      const newQuestion = {
+        id: crypto.randomUUID(),
+        question,
+        answer: null,
+        createdAt: new Date().toISOString(),
+      };
+
+      queryClient.setQueryData<GetRoomQuestionsResponse>(
+        ["get-questions", roomId],
+        [newQuestion, ...questionsArray]
+      );
+
+      return { newQuestion, questions };
     },
+
+    onError(_, __, context) {
+      if (context?.questions) {
+        queryClient.setQueryData<GetRoomQuestionsResponse>(
+          ["get-questions", roomId],
+          context.questions
+        );
+      }
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({ queryKey: ["get-questions", roomId] });
+    // },
   });
 };
