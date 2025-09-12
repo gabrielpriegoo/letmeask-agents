@@ -34,6 +34,7 @@ export const useCreateQuestion = (roomId: string) => {
         question,
         answer: null,
         createdAt: new Date().toISOString(),
+        isGeneratedAnswer: true,
       };
 
       queryClient.setQueryData<GetRoomQuestionsResponse>(
@@ -44,6 +45,34 @@ export const useCreateQuestion = (roomId: string) => {
       return { newQuestion, questions };
     },
 
+    onSuccess: (data, _variables, context) => {
+      queryClient.setQueryData<GetRoomQuestionsResponse>(
+        ["get-questions", roomId],
+        (questions) => {
+          if (!questions) {
+            return questions;
+          }
+
+          if (!context?.newQuestion) {
+            return questions;
+          }
+
+          return questions.map((question) => {
+            if (question.id === context.newQuestion.id) {
+              return {
+                ...context.newQuestion,
+                id: data.questionId,
+                answer: data.answer,
+                isGeneratedAnswer: false,
+              };
+            }
+
+            return question;
+          });
+        }
+      );
+    },
+
     onError(_, __, context) {
       if (context?.questions) {
         queryClient.setQueryData<GetRoomQuestionsResponse>(
@@ -51,8 +80,6 @@ export const useCreateQuestion = (roomId: string) => {
           context.questions
         );
       }
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({ queryKey: ["get-questions", roomId] });
-    // },
+    },
   });
 };
